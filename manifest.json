@@ -1,0 +1,17 @@
+{
+  "short_name": "Mapa GPS León",
+  "name": "Mapa de Posiciones GPS - Inspección de Transportes León",
+  "icons": [
+    {
+      "src": "icono.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#ffffff",
+  "theme_color": "#1a73e8",
+  "display": "standalone",
+  "orientation": "portrait-primary"
+}
