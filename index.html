@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapa de Posiciones Inspección de Transportes León</title>
 
-
     <!-- Favicon (Pestaña del navegador) -->
     <link rel="icon" type="image/png" sizes="32x32" href="icono.png">
     <link rel="icon" type="image/png" sizes="16x16" href="icono.png">
@@ -129,11 +128,11 @@
             box-sizing: border-box;
         }
 
-                    /* Estilos para el buscador de localidades */
-            .geocoder-container { position: relative; margin-bottom: 12px; }
-            .geocoder-results { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dadce0; border-radius: 0 0 4px 4px; max-height: 150px; overflow-y: auto; z-index: 1001; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; }
-            .geocoder-result-item { padding: 8px 10px; font-size: 12px; cursor: pointer; border-bottom: 1px solid #f1f3f4; color: #202124; }
-            .geocoder-result-item:hover { background-color: #f8f9fa; color: var(--primary-color); }
+        /* Estilos para el buscador de localidades */
+        .geocoder-container { position: relative; margin-bottom: 12px; }
+        .geocoder-results { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dadce0; border-radius: 0 0 4px 4px; max-height: 150px; overflow-y: auto; z-index: 1001; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; }
+        .geocoder-result-item { padding: 8px 10px; font-size: 12px; cursor: pointer; border-bottom: 1px solid #f1f3f4; color: #202124; }
+        .geocoder-result-item:hover { background-color: #f8f9fa; color: var(--primary-color); }
 
         .input-group { margin-bottom: 8px; }
         label { display: block; font-size: 11px; color: #5f6368; margin-bottom: 4px; font-weight: 700; letter-spacing: 0.5px; }
@@ -206,6 +205,15 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(32, 33, 36, 0.6); backdrop-filter: blur(3px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-card { background: #ffffff; width: 90%; max-width: 680px; max-height: 85vh; border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.25); display: flex; flex-direction: column; overflow: hidden; animation: modalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        /* Modal Ampliado Específico para Recorridos Archivados */
+        #modal-archive .modal-card {
+            width: 95vw;
+            max-width: 1400px;
+            height: 90vh;
+            max-height: 90vh;
+        }
+
         @keyframes modalSlide { from { transform: translateY(18px) scale(0.97); } to { transform: translateY(0) scale(1); } }
         .modal-header { padding: 16px 20px; background: #f8f9fa; border-bottom: 1px solid #dadce0; display: flex; justify-content: space-between; align-items: center; }
         .modal-header h3 { margin: 0; font-size: 15px; color: #202124; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -255,8 +263,6 @@
 <body>
 
     <!-- OVERLAY DE AUTENTICACIÓN FIREBASE -->
-    
-    <!-- OVERLAY DE AUTENTICACIÓN FIREBASE -->
     <div id="auth-overlay">
         <div class="auth-card">
             <h2 style="margin-top: 0; color: #202124;">Acceso Requerido</h2>
@@ -278,8 +284,6 @@
         </div>
     </div>
 
-
-
     <div class="app-header" id="header-title">
         <img src="images.png" alt="Logo" class="header-logo" onerror="this.style.display='none'">
         <span>MAPA DE POSICIONES GPS - SECCIÓN DE INSPECCIÓN DE TRANSPORTES DE LEÓN</span>
@@ -296,7 +300,6 @@
             <input type="text" id="search-locality" placeholder="Ej: León, Ponferrada, Astorga..." autocomplete="off" oninput="buscarLocalidad(this.value)">
             <div id="geocoder-results" class="geocoder-results"></div>
         </div>
-
 
         <div class="input-group">
             <label for="coords">COORDENADAS GPS</label>
@@ -433,6 +436,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-print" onclick="printArchivedList()" style="grid-column: auto; padding: 10px 16px; font-size: 12px;">🖨️ Imprimir Listado</button>
+                <button class="btn-export" onclick="exportArchiveToExcel()" style="grid-column: auto; padding: 10px 16px; font-size: 12px; background-color: #1e8e3e; color: white;">📊 Exportar a Excel</button>
                 <button class="btn-undo" onclick="closeArchiveModal()">Cerrar</button>
             </div>
         </div>
@@ -546,7 +550,6 @@
         let appIniciada = false;
 
         // --- SISTEMA DE AUTENTICACIÓN ---
-        // --- SISTEMA DE AUTENTICACIÓN ---
         function iniciarSesionEmail() {
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
@@ -560,12 +563,10 @@
 
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Si el login es correcto, el onAuthStateChanged ocultará la pantalla
                     errorDiv.style.display = 'none';
-                    document.getElementById('login-password').value = ''; // Limpiamos por seguridad
+                    document.getElementById('login-password').value = '';
                 })
                 .catch((error) => {
-                    // Manejo de errores básicos para dar feedback
                     errorDiv.style.display = 'block';
                     if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                         errorDiv.innerText = "Correo o contraseña incorrectos.";
@@ -592,38 +593,21 @@
             }
         });
 
-
-
-
-      
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                document.getElementById('auth-overlay').style.display = 'none';
-                document.getElementById('display-user-email').innerText = user.email;
-                iniciarBaseDatosFirebase();
-            } else {
-                document.getElementById('auth-overlay').style.display = 'flex';
-                document.getElementById('display-user-email').innerText = '';
-            }
-        });
-
         // --- CARGA DE DATOS DESDE FIREBASE ---
         function iniciarBaseDatosFirebase() {
             if(appIniciada) return;
             appIniciada = true;
 
-            // Escuchar cambios en el archivo de recorridos (Sustituye a localStorage)
             db.ref('mapa_rutas_gps/archive').on('value', snap => {
                 globalArchive = snap.val() || [];
                 if (document.getElementById('modal-archive').classList.contains('active')) {
                     renderArchiveList();
                 }
             }, error => {
-                console.error("Permiso denegado al leer archivo. Asegúrate de que el UID está en las reglas.", error);
+                console.error("Permiso denegado al leer archivo.", error);
                 alert("No tienes permiso en la base de datos (UID no autorizado).");
             });
 
-            // Cargar el borrador guardado (Solo se ejecuta una vez al arrancar)
             db.ref('mapa_rutas_gps/draft').once('value').then(snap => {
                 const savedData = snap.val();
                 if (savedData) {
@@ -640,7 +624,6 @@
                 console.warn("No se pudo cargar el borrador o no existe:", error);
             });
         }
-
 
         // --- MAPA Y LÓGICA DE LA APP ORIGINAL ---
         const map = L.map('map', { zoomControl: false, renderer: L.canvas() }).setView([42.599023, -5.567016], 11);
@@ -810,9 +793,8 @@
             return rem === 0 ? `${hrs}h` : `${hrs}h ${rem}min`;
         }
 
-        // SUSTITUCIÓN DE LOCALSTORAGE POR FIREBASE
         function saveToFirebaseDraft() {
-            if (!auth.currentUser) return; // Si no hay sesión, no guardar
+            if (!auth.currentUser) return;
             const dataToSave = {
                 meta: currentActiveRouteMeta,
                 points: markersData.map(item => ({ label: item.label, lat: item.lat, lng: item.lng }))
@@ -951,7 +933,6 @@
             document.getElementById('total-km').innerText = "0.0 km";
             document.getElementById('total-time').innerText = "0 min";
             
-            // BORRAR BORRADOR DE FIREBASE
             if(auth.currentUser) db.ref('mapa_rutas_gps/draft').remove();
             
             currentActiveRouteMeta = { title: "", date: "", notes: "" };
@@ -987,7 +968,6 @@
                 points: pointsToSave, kms: globalKmsTotales, time: globalMinutosTotales
             };
 
-            // Guarda asíncronamente en base de datos
             const newArchive = [...globalArchive, newRecord];
             if(auth.currentUser) {
                 db.ref('mapa_rutas_gps/archive').set(newArchive).then(() => {
@@ -1001,8 +981,23 @@
         /* --- MODAL 2: ARCHIVO HISTÓRICO --- */
         function openArchiveModal() {
             document.getElementById('archive-search-text').value = "";
-            document.getElementById('archive-search-date-start').value = "";
-            document.getElementById('archive-search-date-end').value = "";
+            
+            // Establecer por defecto el filtro del mes en curso
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+            // Formato YYYY-MM-DD
+            const formatDateInput = (d) => {
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+
+            document.getElementById('archive-search-date-start').value = formatDateInput(firstDay);
+            document.getElementById('archive-search-date-end').value = formatDateInput(lastDay);
+
             renderArchiveList();
             document.getElementById('modal-archive').classList.add('active');
         }
@@ -1018,9 +1013,8 @@
                 const matchTxt = !txt || rec.title.toLowerCase().includes(txt) || (rec.notes && rec.notes.toLowerCase().includes(txt));
                 let matchDate = true;
                 if (dStart || dEnd) {
-                    const recDate = new Date(rec.date);
-                    if (dStart) matchDate = matchDate && (recDate >= new Date(dStart));
-                    if (dEnd) matchDate = matchDate && (recDate <= new Date(dEnd));
+                    if (dStart) matchDate = matchDate && (rec.date >= dStart);
+                    if (dEnd) matchDate = matchDate && (rec.date <= dEnd);
                 }
                 return matchTxt && matchDate;
             }).sort((a,b) => new Date(b.date) - new Date(a.date));
@@ -1049,7 +1043,7 @@
                         <span><strong>${rec.kms || 0}</strong> km</span>
                         <span><strong>${formatMinutes(rec.time || 0)}</strong> aprox</span>
                     </div>
-                    ${rec.notes ? `<div class="archive-notes">"${rec.notes}"</div>` : ''}
+                    ${rec.notes ? `<div class="archive-notes">"\${rec.notes}"</div>` : ''}
                     <div class="archive-actions">
                         <button class="btn-undo btn-action-sm" onclick="openEditArchiveModal('${rec.id}')">✏️ Editar Info</button>
                         <button class="btn-clear btn-action-sm" onclick="deleteArchivedRecord('${rec.id}')">🗑️ Borrar</button>
@@ -1088,6 +1082,38 @@
                 saveToFirebaseDraft();
             }
             closeArchiveModal();
+        }
+
+        /* --- EXPORTAR A EXCEL --- */
+        function exportArchiveToExcel() {
+            const filtered = getFilteredArchiveList();
+            if (filtered.length === 0) {
+                alert("No hay registros cargados o filtrados para exportar.");
+                return;
+            }
+
+            let csvContent = "\uFEFF"; // BOM UTF-8 para garantizar apertura correcta de caracteres en Excel
+            csvContent += "Fecha;Título del Recorrido;Puntos de Control;Distancia (km);Tiempo Estimado;Observaciones\n";
+
+            filtered.forEach(rec => {
+                const fecha = formatDate(rec.date);
+                const titulo = `"${(rec.title || '').replace(/"/g, '""')}"`;
+                const controles = rec.points ? rec.points.length : 0;
+                const kms = rec.kms || 0;
+                const tiempo = `"${formatMinutes(rec.time || 0)}"`;
+                const obs = `"${(rec.notes || '').replace(/"/g, '""')}"`;
+
+                csvContent += `${fecha};${titulo};${controles};${kms};${tiempo};${obs}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `recorridos_archivados_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         /* --- MODAL 3: EDITAR REGISTRO --- */
@@ -1195,7 +1221,6 @@
 
         /* --- EXPORTAR / IMPORTAR --- */
         function exportData() {
-            // Obtenemos los datos desde la nube en tiempo real para exportar una copia sólida
             db.ref('mapa_rutas_gps').once('value').then(snap => {
                 const serverData = snap.val() || { archive: [], draft: null };
                 const blob = new Blob([JSON.stringify(serverData, null, 2)], { type: "application/json" });
@@ -1234,8 +1259,7 @@
             event.target.value = '';
         }
 
-
-let searchTimeout = null;
+        let searchTimeout = null;
 
         function buscarLocalidad(query) {
             clearTimeout(searchTimeout);
@@ -1246,7 +1270,6 @@ let searchTimeout = null;
                 return;
             }
 
-            // Espera medio segundo tras dejar de escribir para no saturar la API pública
             searchTimeout = setTimeout(() => {
                 const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=es&limit=5`;
                 
@@ -1275,27 +1298,21 @@ let searchTimeout = null;
             const parsedLat = parseFloat(lat);
             const parsedLon = parseFloat(lon);
             
-            // Centra el mapa en la localidad seleccionada con zoom detallado
             map.setView([parsedLat, parsedLon], 13);
             
-            // Oculta el desplegable y limpia o rellena campos si lo deseas
             document.getElementById('geocoder-results').style.display = 'none';
-            document.getElementById('search-locality').value = displayName.split(',')[0]; // Pone el nombre corto en la caja
+            document.getElementById('search-locality').value = displayName.split(',')[0];
             
-            // Opcional: Rellena automáticamente las coordenadas de la caja de abajo por si quieres fijarla rápido
             document.getElementById('coords').value = `${parsedLat.toFixed(6)} ${parsedLon.toFixed(6)}`;
             document.getElementById('label').value = displayName.split(',')[0];
         }
 
-        // Ocultar resultados si se hace clic fuera del buscador
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.geocoder-container')) {
                 const resultsContainer = document.getElementById('geocoder-results');
                 if(resultsContainer) resultsContainer.style.display = 'none';
             }
         });
-
-
     </script>
 </body>
 </html>
