@@ -1043,7 +1043,7 @@
                         <span><strong>${rec.kms || 0}</strong> km</span>
                         <span><strong>${formatMinutes(rec.time || 0)}</strong> aprox</span>
                     </div>
-                    ${rec.notes ? `<div class="archive-notes">"\${rec.notes}"</div>` : ''}
+                    ${rec.notes ? `<div class="archive-notes" style="color: #202124 !important; opacity: 1 !important;">"${rec.notes}"</div>` : ''}
                     <div class="archive-actions">
                         <button class="btn-undo btn-action-sm" onclick="openEditArchiveModal('${rec.id}')">✏️ Editar Info</button>
                         <button class="btn-clear btn-action-sm" onclick="deleteArchivedRecord('${rec.id}')">🗑️ Borrar</button>
